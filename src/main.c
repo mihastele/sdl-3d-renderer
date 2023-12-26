@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 
+SDL_Window *window;
+SDL_Renderer *renderer;
+
 bool initialize_window(void)
 {
     /* Initialize SDL */
@@ -12,12 +15,31 @@ bool initialize_window(void)
         return false;
     }
 
-    SDL_Window *window = SDL_CreateWindow("SDL2 Window",
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          640,
-                                          480,
-                                          0);
+    window = SDL_CreateWindow(NULL,                   // no title, fullscreen
+                              SDL_WINDOWPOS_CENTERED, // centered x
+                              SDL_WINDOWPOS_CENTERED, // centered y
+                              800,                    // width
+                              600,                    // height
+                              SDL_WINDOW_BORDERLESS); // no flags
+
+    if (!window)
+    {
+        fprintf(stderr, "Error creating SDL window: %s\n", SDL_GetError());
+        SDL_Quit();
+        return false;
+    }
+
+    renderer = SDL_CreateRenderer(window, // Window to create renderer for
+                                  -1,     // Display device
+                                  0);     // Renderer flags
+
+    if (!renderer)
+    {
+        fprintf(stderr, "Error creating SDL renderer: %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return false;
+    }
 
     return true;
 }
