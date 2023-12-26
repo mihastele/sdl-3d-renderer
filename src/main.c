@@ -23,6 +23,12 @@ bool initialize_window(void)
         return false;
     }
 
+    // query window size
+    SDL_DisplayMode display_mode;
+    SDL_GetCurrentDisplayMode(0, &display_mode);
+    window_width = display_mode.w;
+    window_height = display_mode.h;
+
     window = SDL_CreateWindow(NULL,                   // no title, fullscreen
                               SDL_WINDOWPOS_CENTERED, // centered x
                               SDL_WINDOWPOS_CENTERED, // centered y
@@ -48,6 +54,8 @@ bool initialize_window(void)
         SDL_Quit();
         return false;
     }
+
+    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 
     return true;
 }
