@@ -2,8 +2,9 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 
-SDL_Window *window;
-SDL_Renderer *renderer;
+bool is_running = false;
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
 
 bool initialize_window(void)
 {
@@ -44,9 +45,53 @@ bool initialize_window(void)
     return true;
 }
 
+void setup(void)
+{
+    /* Add setup code here */
+}
+
+void process_input(void)
+{
+    SDL_Event event;
+    SDL_PollEvent(&event);
+
+    switch (event.type)
+    {
+    case SDL_QUIT:
+        is_running = false;
+        break;
+    case SDL_KEYDOWN:
+        if (event.key.keysym.sym == SDLK_ESCAPE)
+            is_running = false;
+        break;
+    }
+}
+
+void update(void)
+{
+    /* Add update code here */
+}
+
+void render(void)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+}
+
 int main(int argc, char *argv[])
 {
     /* Create SDL window */
+    is_running = initialize_window();
+
+    setup();
+
+    while (is_running)
+    {
+        process_input();
+        update();
+        render();
+    }
 
     return 0;
 }
