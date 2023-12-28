@@ -133,6 +133,7 @@ void update(void)
             transformed_vertex = vec3_rotate_x(transformed_vertex, cube_rotation.x);
             transformed_vertex = vec3_rotate_z(transformed_vertex, cube_rotation.z);
 
+            // translate the vertex away from the camera
             transformed_vertex.z -= camera_position.z;
 
             face_vertices[j] = transformed_vertex;
@@ -194,6 +195,15 @@ void render(void)
             triangle.points[2].y,
             4,
             4,
+            0xFFFFFFFF);
+
+        draw_triangle(
+            triangle.points[0].x,
+            triangle.points[0].y,
+            triangle.points[1].x,
+            triangle.points[1].y,
+            triangle.points[2].x,
+            triangle.points[2].y,
             0xFFFFFFFF);
     }
 
