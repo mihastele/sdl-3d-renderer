@@ -6,6 +6,7 @@
 #include "vector.h"
 
 bool is_running = false;
+int previous_frame_time = 0;
 
 #define N_POINTS (9 * 9 * 9)
 float fov_factor = 640;
@@ -71,7 +72,12 @@ vec2_t project(vec3_t point)
 
 void update(void)
 {
+
+    previous_frame _time = SDL_GetTicks();
+
     cube_rotation.y += 0.01;
+    cube_rotation.x += 0.04;
+    cube_rotation.z += 0.02;
 
     /* Add update code here */
     for (int i = 0; i < N_POINTS; i++)
@@ -79,6 +85,8 @@ void update(void)
         vec3_t point = cube_points[i];
 
         vec3_t transformed_point = vec3_rotate_y(point, cube_rotation.y);
+        transformed_point = vec3_rotate_x(transformed_point, cube_rotation.x);
+        transformed_point = vec3_rotate_z(transformed_point, cube_rotation.z);
 
         transformed_point.z -= camera_position.z;
 
