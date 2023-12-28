@@ -14,6 +14,7 @@ vec3_t cube_points[N_POINTS];
 vec2_t projected_points[N_POINTS];
 
 vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
+vec3_t cube_rotation = {.x = 0, .y = 0, .z = 0};
 
 void setup(void)
 {
@@ -70,14 +71,18 @@ vec2_t project(vec3_t point)
 
 void update(void)
 {
+    cube_rotation.y += 0.01;
+
     /* Add update code here */
     for (int i = 0; i < N_POINTS; i++)
     {
         vec3_t point = cube_points[i];
 
-        point.z -= camera_position.z;
+        vec3_t transformed_point = vec3_rotate_y(point, cube_rotation.y);
 
-        vec2_t projected_point = project(point);
+        transformed_point.z -= camera_position.z;
+
+        vec2_t projected_point = project(transformed_point);
         // int x = (projected_point.x + 1.0) * (window_width / 2.0);
         // int y = (projected_point.y + 1.0) * (window_height / 2.0);
 
