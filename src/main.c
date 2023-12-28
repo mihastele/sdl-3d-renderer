@@ -5,6 +5,7 @@
 #include "display.h"
 #include "vector.h"
 #include "mesh.h"
+#include "array.h"
 
 bool is_running = false;
 int previous_frame_time = 0;
@@ -15,7 +16,7 @@ float fov_factor = 640;
 // vec3_t cube_points[N_POINTS];
 // vec2_t projected_points[N_POINTS];
 
-triangle_t triangles_to_render[N_MESH_FACES];
+triangle_t *triangles_to_render = NULL;
 
 vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
 vec3_t cube_rotation = {.x = 0, .y = 0, .z = 0};
@@ -75,6 +76,9 @@ vec2_t project(vec3_t point)
 
 void update(void)
 {
+
+    // initialize Arrays to render
+    triangles_to_render = NULL;
 
     // waste/delay until we reach the target frame time
 
@@ -147,7 +151,8 @@ void update(void)
             projected_triangle.points[j] = projected_point;
         }
 
-        triangles_to_render[i] = projected_triangle;
+        // triangles_to_render[i] = projected_triangle;
+        array_push(triangles_to_render, projected_triangle);
     }
 }
 
@@ -171,7 +176,9 @@ void render(void)
     //         0xFFFFFF00);
     // }
 
-    for (int i = 0; i < N_MESH_FACES; i++)
+    int num_triangles = array_length(triangles_to_render);
+
+    for (int i = 0; i < num_triangles; i++)
     {
 
         triangle_t triangle = triangles_to_render[i];
@@ -204,7 +211,7 @@ void render(void)
             triangle.points[1].y,
             triangle.points[2].x,
             triangle.points[2].y,
-            0xFFFFFFFF);
+            0xFFFFFF00);
     }
 
     draw_grid(55, 0xFFFFFFFF);
@@ -212,6 +219,8 @@ void render(void)
     // draw_pixel(406, 406, 0xFFFF0000);
 
     // draw_rect(0, 0, 200, 200, 0xFFFF0000);
+
+    array_free(triangles_to_render);
 
     render_color_buffer();
 
