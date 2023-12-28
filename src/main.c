@@ -73,7 +73,12 @@ vec2_t project(vec3_t point)
 void update(void)
 {
 
-    previous_frame _time = SDL_GetTicks();
+    // waste/delay until we reach the target frame time
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), previous_frame_time + FRAME_TARGET_TIME))
+    {
+    }
+
+    previous_frame_time = SDL_GetTicks();
 
     cube_rotation.y += 0.01;
     cube_rotation.x += 0.04;
