@@ -17,6 +17,21 @@ extern SDL_Renderer *renderer;
 extern uint32_t *color_buffer;
 extern SDL_Texture *color_buffer_texture;
 
+enum Cull_method
+{
+    CULL_BACKFACE,
+    CULL_NONE,
+};
+
+enum Render_method
+{
+    RENDER_WIRE,
+    RENDER_WIRE_VERTEX,
+    RENDER_VERTEX,
+    RENDER_FILL_TRIANGLE,
+    RENDER_FILL_TRIANGLE_WIRE,
+};
+
 bool initialize_window(void);
 void draw_grid(int grid_size, uint32_t color);
 void draw_pixel(int x, int y, uint32_t color);
