@@ -19,7 +19,7 @@ float fov_factor = 640;
 triangle_t *triangles_to_render = NULL;
 
 vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
-vec3_t cube_rotation = {.x = 0, .y = 0, .z = 0};
+// vec3_t mesh.rotation = {.x = 0, .y = 0, .z = 0};
 
 void setup(void)
 {
@@ -45,6 +45,8 @@ void setup(void)
     //         }
     //     }
     // }
+
+    load_cube_mesh_data();
 }
 
 void process_input(void)
@@ -94,18 +96,18 @@ void update(void)
 
     previous_frame_time = SDL_GetTicks();
 
-    cube_rotation.y += 0.01;
-    cube_rotation.x += 0.04;
-    cube_rotation.z += 0.02;
+    mesh.rotation.y += 0.01;
+    mesh.rotation.x += 0.04;
+    mesh.rotation.z += 0.02;
 
     /* Add update code here */
     // for (int i = 0; i < N_POINTS; i++)
     // {
     //     vec3_t point = cube_points[i];
 
-    //     vec3_t transformed_point = vec3_rotate_y(point, cube_rotation.y);
-    //     transformed_point = vec3_rotate_x(transformed_point, cube_rotation.x);
-    //     transformed_point = vec3_rotate_z(transformed_point, cube_rotation.z);
+    //     vec3_t transformed_point = vec3_rotate_y(point, mesh.rotation.y);
+    //     transformed_point = vec3_rotate_x(transformed_point, mesh.rotation.x);
+    //     transformed_point = vec3_rotate_z(transformed_point, mesh.rotation.z);
 
     //     transformed_point.z -= camera_position.z;
 
@@ -117,14 +119,16 @@ void update(void)
     //     projected_points[i] = projected_point;
     // }
 
-    for (int i = 0; i < N_MESH_FACES; i++)
+    int num_faces = array_length(mesh.faces);
+
+    for (int i = 0; i < num_faces; i++)
     {
-        face_t mesh_face = mesh_faces[i];
+        face_t mesh_face = mesh.faces[i];
 
         vec3_t face_vertices[3] = {
-            mesh_vertices[mesh_face.a - 1],
-            mesh_vertices[mesh_face.b - 1],
-            mesh_vertices[mesh_face.c - 1],
+            mesh.vertices[mesh_face.a - 1],
+            mesh.vertices[mesh_face.b - 1],
+            mesh.vertices[mesh_face.c - 1],
         };
 
         triangle_t projected_triangle;
@@ -133,9 +137,9 @@ void update(void)
         {
             vec3_t transformed_vertex = face_vertices[j];
 
-            transformed_vertex = vec3_rotate_y(transformed_vertex, cube_rotation.y);
-            transformed_vertex = vec3_rotate_x(transformed_vertex, cube_rotation.x);
-            transformed_vertex = vec3_rotate_z(transformed_vertex, cube_rotation.z);
+            transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
+            transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
+            transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
             // translate the vertex away from the camera
             transformed_vertex.z -= camera_position.z;
