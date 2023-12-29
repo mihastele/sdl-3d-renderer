@@ -113,6 +113,51 @@ vec2_t project(vec3_t point)
     return projected_point;
 }
 
+void quicksort_rec(triangle_t *items, int left, int right)
+{
+    int i, j;
+    triangle_t pivot, temp;
+
+    i = left;
+    j = right;
+
+    pivot = items[(left + right) / 2];
+
+    do
+    {
+        while ((items[i].avg_depth < pivot.avg_depth) && (i < right))
+        {
+            i++;
+        }
+        while ((pivot.avg_depth < items[j].avg_depth) && (j > left))
+        {
+            j--;
+        }
+        if (i <= j)
+        {
+            temp = items[i];
+            items[i] = items[j];
+            items[j] = temp;
+            i++;
+            j--;
+        }
+    } while (i <= j);
+
+    if (left < j)
+    {
+        quicksort_rec(items, left, j);
+    }
+    if (i < right)
+    {
+        quicksort_rec(items, i, right);
+    }
+}
+
+void quicksort(triangle_t *items)
+{
+    quicksort_rec(items, 0, array_length(items) - 1);
+}
+
 void update(void)
 {
 
@@ -228,15 +273,31 @@ void update(void)
             // projected_triangle.points[j] = projected_points[j];
         }
 
+        // calculate average depth based on the vertice tranformation
+        float avg_depth =
+            (transformed_vertices[0].z +
+             transformed_vertices[1].z +
+             transformed_vertices[2].z) /
+            3.0;
+
         triangle_t projected_triangle = {
             .points[0] = projected_points[0],
             .points[1] = projected_points[1],
             .points[2] = projected_points[2],
-            .color = mesh_face.color};
+            .color = mesh_face.color,
+            .avg_depth = avg_depth};
 
         // triangles_to_render[i] = projected_triangle;
         array_push(triangles_to_render, projected_triangle);
     }
+
+    // TODO: sort triangles to render by avg_depth
+    quicksort(triangles_to_render);
+
+    // for (int i = 0; i < array_length(triangles_to_render); i++)
+    // {
+    //     printf("triangle %d avg_depth = %f\n", i, triangles_to_render[i].avg_depth);
+    // }
 }
 
 void free_resources(void)
