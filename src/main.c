@@ -154,8 +154,13 @@ void update(void)
 
         vec3_t vector_ab = vec3_sub(vector_b, vector_a);
         vec3_t vector_ac = vec3_sub(vector_c, vector_a);
+        vec3_normalize_inplace(&vector_ab);
+        vec3_normalize_inplace(&vector_ac);
 
         vec3_t normal = vec3_cross(vector_ab, vector_ac);
+
+        // normalize the normal
+        vec3_normalize_inplace(&normal);
 
         vec3_t camera_ray = vec3_sub(camera_position, vector_a);
 
@@ -220,26 +225,35 @@ void render(void)
 
         triangle_t triangle = triangles_to_render[i];
 
-        draw_rect(
+        // draw_rect(
+        //     triangle.points[0].x,
+        //     triangle.points[0].y,
+        //     4,
+        //     4,
+        //     0xFFFFFFFF);
+
+        // draw_rect(
+        //     triangle.points[1].x,
+        //     triangle.points[1].y,
+        //     4,
+        //     4,
+        //     0xFFFFFFFF);
+
+        // draw_rect(
+        //     triangle.points[2].x,
+        //     triangle.points[2].y,
+        //     4,
+        //     4,
+        //     0xFFFFFFFF);
+
+        draw_filled_triangle(
             triangle.points[0].x,
             triangle.points[0].y,
-            4,
-            4,
-            0xFFFFFFFF);
-
-        draw_rect(
             triangle.points[1].x,
             triangle.points[1].y,
-            4,
-            4,
-            0xFFFFFFFF);
-
-        draw_rect(
             triangle.points[2].x,
             triangle.points[2].y,
-            4,
-            4,
-            0xFFFFFFFF);
+            0x0FFFFFFF);
 
         draw_triangle(
             triangle.points[0].x,
@@ -248,8 +262,11 @@ void render(void)
             triangle.points[1].y,
             triangle.points[2].x,
             triangle.points[2].y,
-            0xFFFFFF00);
+            0xFF000000);
     }
+
+    // draw_triangle(0, 0, 0, 300, 300, 100, 0xFFFFFFFF);
+    // draw_filled_triangle(0, 0, 0, 280, 230, 100, 0xFF0000FF);
 
     draw_grid(55, 0xFFFFFFFF);
 

@@ -108,6 +108,70 @@ void draw_triangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t colo
     draw_line(x2, y2, x0, y0, color);
 }
 
+void draw_filled_triangle(
+    int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color)
+{
+    if (y0 > y1)
+    {
+        int temp = y0;
+        y0 = y1;
+        y1 = temp;
+        temp = x0;
+        x0 = x1;
+        x1 = temp;
+    }
+    if (y1 > y2)
+    {
+        int temp = y1;
+        y1 = y2;
+        y2 = temp;
+        temp = x1;
+        x1 = x2;
+        x2 = temp;
+    }
+    if (y0 > y1)
+    {
+        int temp = y0;
+        y0 = y1;
+        y1 = temp;
+        temp = x0;
+        x0 = x1;
+        x1 = temp;
+    }
+
+    int total_height = y2 - y0;
+
+    for (int i = 0; i < total_height; i++)
+    {
+        bool second_half = i > y1 - y0 || y1 == y0;
+        int segment_height = second_half ? y2 - y1 : y1 - y0;
+
+        float alpha = (float)i / total_height;
+        float beta = (float)(i - (second_half ? y1 - y0 : 0)) / segment_height;
+
+        int ax = x0 + (x2 - x0) * alpha;
+        int ay = y0 + (y2 - y0) * alpha;
+
+        int bx = second_half ? x1 + (x2 - x1) * beta : x0 + (x1 - x0) * beta;
+        int by = second_half ? y1 + (y2 - y1) * beta : y0 + (y1 - y0) * beta;
+
+        if (ax > bx)
+        {
+            int temp = ax;
+            ax = bx;
+            bx = temp;
+            temp = ay;
+            ay = by;
+            by = temp;
+        }
+
+        for (int j = ax; j <= bx; j++)
+        {
+            draw_pixel(j, y0 + i, color);
+        }
+    }
+}
+
 void draw_rect(int x, int y, int width, int height, uint32_t color)
 {
     for (int i = 0; i < height; i++)
