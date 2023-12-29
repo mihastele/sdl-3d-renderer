@@ -7,6 +7,8 @@ mesh_t mesh = {
     .vertices = NULL,
     .faces = NULL,
     .rotation = {.x = 0, .y = 0, .z = 0},
+    .scale = {.x = 1, .y = 1, .z = 1},
+    .translation = {.x = 0, .y = 0, .z = 0},
 };
 
 vec3_t mesh_vertices[N_CUBE_VERTICES] = {

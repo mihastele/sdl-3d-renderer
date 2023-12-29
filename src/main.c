@@ -6,6 +6,7 @@
 #include "vector.h"
 #include "mesh.h"
 #include "array.h"
+#include "matrix.h"
 
 bool is_running = false;
 int previous_frame_time = 0;
@@ -182,6 +183,10 @@ void update(void)
     mesh.rotation.x += 0.03;
     mesh.rotation.z += 0.04;
 
+    mesh.scale.x += 0.002;
+
+    mat4_t scale_matrix = mat4_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+
     /* Add update code here */
     // for (int i = 0; i < N_POINTS; i++)
     // {
@@ -219,9 +224,11 @@ void update(void)
         {
             vec3_t transformed_vertex = face_vertices[j];
 
-            transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
-            transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
-            transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
+            // use matrix to scale our original matrix
+
+            // transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
+            // transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
+            // transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
             // translate the vertex away from the camera
             transformed_vertex.z += 5; //  -= -5

@@ -16,9 +16,11 @@ extern face_t cube_faces[N_CUBE_FACES];
 
 typedef struct
 {
-    vec3_t *vertices; // dynamic array of vertices
-    face_t *faces;    // dynamic array of faces
-    vec3_t rotation;  // rotation of the mesh (x,y,z)
+    vec3_t *vertices;   // dynamic array of vertices
+    face_t *faces;      // dynamic array of faces
+    vec3_t rotation;    // rotation of the mesh (x,y,z)
+    vec3_t scale;       // scale of the mesh (x,y,z)
+    vec3_t translation; // translation of the mesh (x,y,z)
 } mesh_t;
 
 extern mesh_t mesh;
