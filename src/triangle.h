@@ -9,6 +9,7 @@ typedef struct
     int a;
     int b;
     int c;
+    uint32_t color;
 } face_t;
 
 typedef struct
