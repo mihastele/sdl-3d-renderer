@@ -46,7 +46,7 @@ void setup(void)
     //     }
     // }
 
-    load_obj_file_data("./assets/teapot.obj");
+    load_obj_file_data("./assets/f22.obj");
 }
 
 void process_input(void)
@@ -96,9 +96,9 @@ void update(void)
 
     previous_frame_time = SDL_GetTicks();
 
-    mesh.rotation.y += 0.01;
-    mesh.rotation.x += 0.04;
-    mesh.rotation.z += 0.02;
+    mesh.rotation.y += 0.00;
+    mesh.rotation.x += 0.03;
+    mesh.rotation.z += 0.00;
 
     /* Add update code here */
     // for (int i = 0; i < N_POINTS; i++)
