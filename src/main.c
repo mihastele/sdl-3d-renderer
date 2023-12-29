@@ -18,7 +18,7 @@ float fov_factor = 640;
 
 triangle_t *triangles_to_render = NULL;
 
-vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
+vec3_t camera_position = {0, 0, 0};
 // vec3_t mesh.rotation = {.x = 0, .y = 0, .z = 0};
 
 void setup(void)
@@ -46,7 +46,7 @@ void setup(void)
     //     }
     // }
 
-    load_obj_file_data("./assets/f22.obj");
+    load_obj_file_data("./assets/cube.obj");
 }
 
 void process_input(void)
@@ -96,9 +96,9 @@ void update(void)
 
     previous_frame_time = SDL_GetTicks();
 
-    mesh.rotation.y += 0.00;
+    mesh.rotation.y += 0.03;
     mesh.rotation.x += 0.03;
-    mesh.rotation.z += 0.00;
+    mesh.rotation.z += 0.03;
 
     /* Add update code here */
     // for (int i = 0; i < N_POINTS; i++)
@@ -131,7 +131,7 @@ void update(void)
             mesh.vertices[mesh_face.c - 1],
         };
 
-        triangle_t projected_triangle;
+        vec3_t transformed_vertices[3];
 
         for (int j = 0; j < 3; j++)
         {
@@ -142,11 +142,37 @@ void update(void)
             transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
             // translate the vertex away from the camera
-            transformed_vertex.z -= camera_position.z;
+            transformed_vertex.z += 5; //  -= -5
 
-            face_vertices[j] = transformed_vertex;
+            transformed_vertices[j] = transformed_vertex;
+        }
 
-            vec2_t projected_point = project(transformed_vertex);
+        // backface culling begins here
+        vec3_t vector_a = transformed_vertices[0];
+        vec3_t vector_b = transformed_vertices[1];
+        vec3_t vector_c = transformed_vertices[2];
+
+        vec3_t vector_ab = vec3_sub(vector_b, vector_a);
+        vec3_t vector_ac = vec3_sub(vector_c, vector_a);
+
+        vec3_t normal = vec3_cross(vector_ab, vector_ac);
+
+        vec3_t camera_ray = vec3_sub(camera_position, vector_a);
+
+        float dot_product = vec3_dot(normal, camera_ray);
+
+        // skip the triangle if it's facing away from the camera
+        if (dot_product < 0)
+        {
+            continue;
+        }
+
+        triangle_t projected_triangle;
+
+        for (int j = 0; j < 3; j++)
+        {
+
+            vec2_t projected_point = project(transformed_vertices[j]);
 
             // scale and project to the middle
             projected_point.x += window_width / 2;
