@@ -46,7 +46,7 @@ void setup(void)
     //     }
     // }
 
-    load_cube_mesh_data();
+    load_obj_file_data("./assets/teapot.obj");
 }
 
 void process_input(void)
@@ -160,6 +160,13 @@ void update(void)
     }
 }
 
+void free_resources(void)
+{
+    free(color_buffer);
+    array_free(mesh.vertices);
+    array_free(mesh.faces);
+}
+
 void render(void)
 {
     // we are using color buffer now
@@ -240,14 +247,15 @@ int main(int argc, char *argv[])
 
     setup();
 
-    while (is_running)
-    {
-        process_input();
-        update();
-        render();
-    }
+    // while (is_running)
+    // {
+    //     process_input();
+    //     update();
+    //     render();
+    // }
 
     destroy_window();
+    free_resources();
 
     return 0;
 }

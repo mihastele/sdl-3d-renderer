@@ -48,3 +48,15 @@ void load_cube_mesh_data(void)
         array_push(mesh.faces, face);
     }
 }
+
+void load_obj_file_data(char *filename)
+{
+    FILE *fp = fopen(filename, "r");
+
+    char line[1024]; // max lenght 1024 for simpler impementation
+
+    while (fgets(line, 1024, fp))
+    {
+        printf("LINE=%s", line);
+    }
+}
