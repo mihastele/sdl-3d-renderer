@@ -218,13 +218,14 @@ void update(void)
             mesh.vertices[mesh_face.c - 1],
         };
 
-        vec3_t transformed_vertices[3];
+        vec4_t transformed_vertices[3];
 
         for (int j = 0; j < 3; j++)
         {
-            vec3_t transformed_vertex = face_vertices[j];
+            vec4_t transformed_vertex = vec4_from_vec3(face_vertices[j]);
 
             // use matrix to scale our original matrix
+            transformed_vertex = mat4_mul_vec4(scale_matrix, transformed_vertex);
 
             // transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
             // transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
@@ -239,9 +240,9 @@ void update(void)
         if (cull_method == CULL_BACKFACE)
         {
             // backface culling begins here
-            vec3_t vector_a = transformed_vertices[0];
-            vec3_t vector_b = transformed_vertices[1];
-            vec3_t vector_c = transformed_vertices[2];
+            vec3_t vector_a = vec3_from_vec4(transformed_vertices[0]);
+            vec3_t vector_b = vec3_from_vec4(transformed_vertices[1]);
+            vec3_t vector_c = vec3_from_vec4(transformed_vertices[2]);
 
             vec3_t vector_ab = vec3_sub(vector_b, vector_a);
             vec3_t vector_ac = vec3_sub(vector_c, vector_a);
@@ -271,7 +272,7 @@ void update(void)
         for (int j = 0; j < 3; j++)
         {
 
-            projected_points[j] = project(transformed_vertices[j]);
+            projected_points[j] = project(vec3_from_vec4(transformed_vertices[j]));
 
             // scale and project to the middle
             projected_points[j].x += window_width / 2;
