@@ -1,4 +1,5 @@
 #include "matrix.h"
+#include <math.h>
 
 mat4_t mat4_identity()
 {
@@ -25,6 +26,54 @@ mat4_t mat4_make_scale(float x, float y, float z)
     m.m[1][1] = y;
     m.m[2][2] = z;
     return m;
+}
+
+mat4_t mat4_make_rotation_x(float angle)
+{
+    mat4_t m = mat4_identity();
+    float c = cos(angle);
+    float s = sin(angle);
+    m.m[1][1] = c;
+    m.m[1][2] = -s;
+    m.m[2][1] = s;
+    m.m[2][2] = c;
+    return m;
+}
+
+mat4_t mat4_make_rotation_y(float angle)
+{
+    mat4_t m = mat4_identity();
+    float c = cos(angle);
+    float s = sin(angle);
+    m.m[0][0] = c;
+    m.m[0][2] = s;
+    m.m[2][0] = -s;
+    m.m[2][2] = c;
+    return m;
+}
+
+mat4_t mat4_make_rotation_z(float angle)
+{
+    mat4_t m = mat4_identity();
+    float c = cos(angle);
+    float s = sin(angle);
+    m.m[0][0] = c;
+    m.m[0][1] = -s;
+    m.m[1][0] = s;
+    m.m[1][1] = c;
+    return m;
+}
+
+mat4_t mat4_mul(mat4_t a, mat4_t b)
+{
+    mat4_t r = {0};
+    for (int i = 0; i < 4; i++) {
+        r.m[i][0] = a.m[i][0] * b.m[0][0] + a.m[i][1] * b.m[1][0] + a.m[i][2] * b.m[2][0] + a.m[i][3] * b.m[3][0];
+        r.m[i][1] = a.m[i][0] * b.m[0][1] + a.m[i][1] * b.m[1][1] + a.m[i][2] * b.m[2][1] + a.m[i][3] * b.m[3][1];
+        r.m[i][2] = a.m[i][0] * b.m[0][2] + a.m[i][1] * b.m[1][2] + a.m[i][2] * b.m[2][2] + a.m[i][3] * b.m[3][2];
+        r.m[i][3] = a.m[i][0] * b.m[0][3] + a.m[i][1] * b.m[1][3] + a.m[i][2] * b.m[2][3] + a.m[i][3] * b.m[3][3];
+    }
+    return r;
 }
 
 vec4_t mat4_mul_vec4(mat4_t m, vec4_t v)
