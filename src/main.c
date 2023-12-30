@@ -1,17 +1,18 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include <math.h>
 #include <SDL2/SDL.h>
-#include "display.h"
-#include "vector.h"
-#include "mesh.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
 #include "array.h"
+#include "display.h"
 #include "matrix.h"
+#include "mesh.h"
+#include "vector.h"
 
 bool is_running = false;
 int previous_frame_time = 0;
 
-float fov_factor = 640;
+mat4_t projection_matrix;
 
 // #define N_POINTS (9 * 9 * 9)
 // vec3_t cube_points[N_POINTS];
@@ -53,6 +54,17 @@ void setup(void)
     //         }
     //     }
     // }
+
+    // initilaize projection matrix
+    float fov = 3.14159265359 / 3.0f; // 60 degrees in radians
+    float aspect = (float)window_width / (float)window_height;
+    float near = 0.1f;
+    float far = 100.0f;
+    projection_matrix = mat4_make_perspective(
+        fov,
+        aspect,
+        near,
+        far);
 
     load_obj_file_data("./assets/f22.obj");
 }
@@ -105,14 +117,14 @@ void process_input(void)
 }
 
 // Returns projected 2D point
-vec2_t project(vec3_t point)
-{
-    vec2_t projected_point = {
-        .x = (fov_factor * point.x) / point.z,
-        .y = (fov_factor * point.y) / point.z};
+// vec2_t project(vec3_t point)
+// {
+//     vec2_t projected_point = {
+//         .x = (fov_factor * point.x) / point.z,
+//         .y = (fov_factor * point.y) / point.z};
 
-    return projected_point;
-}
+//     return projected_point;
+// }
 
 void quicksort_rec(triangle_t *items, int left, int right)
 {
@@ -181,35 +193,17 @@ void update(void)
 
     mesh.rotation.y += 0.01;
     mesh.rotation.x += 0.03;
-    mesh.rotation.z += 0.04;
+    //    mesh.rotation.z += 0.04;
 
     mesh.scale.x += 0.002;
     mesh.translation.x += 0.01;
-//    mesh.translation.z = 5;
+    mesh.translation.z = 5;
 
-    mat4_t rotation_matrix_y = mat4_make_rotation_y(mesh.rotation.y);
-    mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+    //    mat4_t rotation_matrix_y = mat4_make_rotation_y(mesh.rotation.y);
+    mat4_t rotation_matrix_x = mat4_make_rotation_x(mesh.rotation.x);
+    //    mat4_t rotation_matrix_z = mat4_make_rotation_z(mesh.rotation.z);
+    //    mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
     mat4_t translation_matrix = mat4_make_translation(mesh.translation.x, mesh.translation.y, mesh.translation.z);
-
-
-    /* Add update code here */
-    // for (int i = 0; i < N_POINTS; i++)
-    // {
-    //     vec3_t point = cube_points[i];
-
-    //     vec3_t transformed_point = vec3_rotate_y(point, mesh.rotation.y);
-    //     transformed_point = vec3_rotate_x(transformed_point, mesh.rotation.x);
-    //     transformed_point = vec3_rotate_z(transformed_point, mesh.rotation.z);
-
-    //     transformed_point.z -= camera_position.z;
-
-    //     vec2_t projected_point = project(transformed_point);
-    //     // int x = (projected_point.x + 1.0) * (window_width / 2.0);
-    //     // int y = (projected_point.y + 1.0) * (window_height / 2.0);
-
-    //     // draw_rect(x, y, 4, 4, 0xFFFFFFFF);
-    //     projected_points[i] = projected_point;
-    // }
 
     int num_faces = array_length(mesh.faces);
 
@@ -232,24 +226,15 @@ void update(void)
             // create world matrix
             mat4_t world_matrix = mat4_identity();
 
-            world_matrix = mat4_mul(world_matrix, scale_matrix);
-            world_matrix = mat4_mul(world_matrix, rotation_matrix_y);
+            //            world_matrix = mat4_mul(world_matrix, scale_matrix);
+            //            world_matrix = mat4_mul(world_matrix, rotation_matrix_y);
+            world_matrix = mat4_mul(world_matrix, rotation_matrix_x);
+            //            world_matrix = mat4_mul(world_matrix, rotation_matrix_z);
             world_matrix = mat4_mul(world_matrix, translation_matrix);
 
             //
 
             transformed_vertex = mat4_mul_vec4(world_matrix, transformed_vertex);
-
-
-            // use matrix to scale our original matrix
-//            transformed_vertex = mat4_mul_vec4(scale_matrix, transformed_vertex);
-//            transformed_vertex = mat4_mul_vec4(translation_matrix, transformed_vertex);
-//            transformed_vertex = mat4_mul_vec4(rotation_matrix_y, transformed_vertex);
-
-            // transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
-            // transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
-            // transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
-
 
             transformed_vertices[j] = transformed_vertex;
         }
@@ -284,12 +269,12 @@ void update(void)
 
         // triangle_t projected_triangle;
 
-        vec2_t projected_points[3];
+        vec4_t projected_points[3];
 
         for (int j = 0; j < 3; j++)
         {
 
-            projected_points[j] = project(vec3_from_vec4(transformed_vertices[j]));
+            projected_points[j] = mat4_mul_vec4_project(projection_matrix, transformed_vertices[j]);
 
             // scale and project to the middle
             projected_points[j].x += window_width / 2;
@@ -306,9 +291,10 @@ void update(void)
             3.0;
 
         triangle_t projected_triangle = {
-            .points[0] = projected_points[0],
-            .points[1] = projected_points[1],
-            .points[2] = projected_points[2],
+            .points = {
+                {.x = projected_points[0].x, .y = projected_points[0].y},
+                {.x = projected_points[1].x, .y = projected_points[1].y},
+                {.x = projected_points[2].x, .y = projected_points[2].y}},
             .color = mesh_face.color,
             .avg_depth = avg_depth};
 
