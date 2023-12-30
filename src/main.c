@@ -56,8 +56,8 @@ void setup(void)
     // }
 
     // initilaize projection matrix
-    // float fov = 3.14159265359 / 3.0f; // 60 degrees in radians
-    float fov = 3.14159265359 / 2.0f;
+    float fov = 3.14159265359 / 3.0f; // 60 degrees in radians
+    // float fov = 3.14159265359 / 2.0f;
     float aspect = (float)window_width / (float)window_height;
     float near = 0.1f;
     float far = 100.0f;
@@ -67,7 +67,7 @@ void setup(void)
         near,
         far);
 
-    load_obj_file_data("./assets/teapot.obj");
+    load_obj_file_data("./assets/f22.obj");
 }
 
 void process_input(void)
@@ -277,8 +277,8 @@ void update(void)
 
             projected_points[j] = mat4_mul_vec4_project(projection_matrix, transformed_vertices[j]);
 
-            projected_points[j].x *= (window_width / 1800.0);
-            projected_points[j].y *= (window_height / 1800.0);
+            projected_points[j].x *= (window_width / 2.0);
+            projected_points[j].y *= (window_height / 2.0);
 
             // project to the middle
             projected_points[j].x += window_width / 2.0;
