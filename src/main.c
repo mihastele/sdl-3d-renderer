@@ -179,13 +179,16 @@ void update(void)
 
     previous_frame_time = SDL_GetTicks();
 
-    mesh.rotation.y += 0.01;
-    mesh.rotation.x += 0.03;
-    mesh.rotation.z += 0.04;
+//    mesh.rotation.y += 0.01;
+//    mesh.rotation.x += 0.03;
+//    mesh.rotation.z += 0.04;
 
     mesh.scale.x += 0.002;
+    mesh.translation.x += 0.01;
+    mesh.translation.z = 5;
 
-    mat4_t scale_matrix = mat4_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+    mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+    mat4_t translation_matrix = mat4_make_translation(mesh.translation.x, mesh.translation.y, mesh.translation.z);
 
     /* Add update code here */
     // for (int i = 0; i < N_POINTS; i++)
@@ -226,13 +229,12 @@ void update(void)
 
             // use matrix to scale our original matrix
             transformed_vertex = mat4_mul_vec4(scale_matrix, transformed_vertex);
+            transformed_vertex = mat4_mul_vec4(translation_matrix, transformed_vertex);
 
             // transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
             // transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
             // transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
-            // translate the vertex away from the camera
-            transformed_vertex.z += 5; //  -= -5
 
             transformed_vertices[j] = transformed_vertex;
         }
