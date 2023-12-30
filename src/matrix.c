@@ -91,9 +91,10 @@ vec4_t mat4_mul_vec4(mat4_t m, vec4_t v)
 mat4_t mat4_make_perspective(float fov, float aspect, float near, float far)
 {
     mat4_t m = {0};
-    float fov_rad = 1.0f / tan(fov * 0.5f / 180.0f * 3.14159265358979323846f);
-    m.m[0][0] = aspect * fov_rad;
-    m.m[1][1] = fov_rad;
+    // float fov_rad = 1.0f / tan(fov * 0.5f / 180.0f * 3.14159265358979323846f);
+    float fov = 1.0f / tan(fov * 0.5f);
+    m.m[0][0] = aspect * fov;
+    m.m[1][1] = fov;
     m.m[2][2] = far / (far - near);
     m.m[3][2] = (-far * near) / (far - near);
     m.m[2][3] = 1.0f;
